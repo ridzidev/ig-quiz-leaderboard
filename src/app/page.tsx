@@ -19,7 +19,7 @@ export default async function Page() {
     }
     
     // Use proper typing for Papa.parse
-    const parsed = Papa.parse<LeaderboardEntry>(csvText, {
+    const parsed = Papa.parse<Record<string, unknown>>(csvText, {
       header: true,
       dynamicTyping: true,
       skipEmptyLines: true,
@@ -27,8 +27,8 @@ export default async function Page() {
 
     // Ensure data is an array of LeaderboardEntry
     const leaderboard: LeaderboardEntry[] = parsed.data.map((row) => ({
-      id: row["id/quiz"] || '',
-      partisipasi: row["partisipasi"] || '',
+      id: String(row["username"] || ''),  // Updated key from "id/quiz" to "username"
+      partisipasi: String(row["partisipasi"] || ''),
       score: Number(row["score"]) || 0,
     }));
 
