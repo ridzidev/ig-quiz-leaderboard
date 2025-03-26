@@ -18,27 +18,30 @@ export default async function Page() {
       rank?: number;
     }
     
-    const { data } = Papa.parse<LeaderboardEntry>(csvText, {
+    // Use proper typing for Papa.parse
+    const parsed = Papa.parse<LeaderboardEntry>(csvText, {
       header: true,
       dynamicTyping: true,
       skipEmptyLines: true,
     });
-    
-    const leaderboard: LeaderboardEntry[] = data.map((row) => ({
-      id: (row as any)['id/quiz'] || '',
-      partisipasi: (row as any)['partisipasi'] || '',
-      score: Number((row as any)['score']) || 0,
-    }));
-    
 
+    // Ensure data is an array of LeaderboardEntry
+    const leaderboard: LeaderboardEntry[] = parsed.data.map((row) => ({
+      id: row["id/quiz"] || '',
+      partisipasi: row["partisipasi"] || '',
+      score: Number(row["score"]) || 0,
+    }));
+
+    // Sorting & Ranking Logic
     leaderboard.sort((a, b) =>
-      a.score !== b.score ? b.score - a.score : (a.id || '').localeCompare(b.id || '')
+      a.score !== b.score ? b.score - a.score : a.id.localeCompare(b.id)
     );
 
     if (leaderboard.length > 0) {
       leaderboard[0].rank = 1;
       for (let i = 1; i < leaderboard.length; i++) {
-        leaderboard[i].rank = leaderboard[i].score < leaderboard[i - 1].score ? i + 1 : leaderboard[i - 1].rank;
+        leaderboard[i].rank =
+          leaderboard[i].score < leaderboard[i - 1].score ? i + 1 : leaderboard[i - 1].rank;
       }
     }
 
