@@ -55,8 +55,8 @@ export default async function Page() {
               <tr>
                 <th className="px-4 py-3 text-left text-xs font-bold text-purple-700 uppercase tracking-wider">Rank</th>
                 <th className="px-4 py-3 text-left text-xs font-bold text-purple-700 uppercase tracking-wider">Name</th>
-                <th className="px-4 py-3 text-left text-xs font-bold text-purple-700 uppercase tracking-wider">Participation</th>
                 <th className="px-4 py-3 text-left text-xs font-bold text-purple-700 uppercase tracking-wider">Score</th>
+                <th className="px-4 py-3 text-left text-xs font-bold text-purple-700 uppercase tracking-wider">Participation</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
@@ -76,8 +76,8 @@ export default async function Page() {
                       <span className="ml-2 text-sm text-gray-800">{item.id}</span>
                     </div>
                   </td>
-                  <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-600">{item.partisipasi}</td>
                   <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-600">{item.score}</td>
+                  <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-600">{item.partisipasi}</td>
                 </tr>
               ))}
             </tbody>
