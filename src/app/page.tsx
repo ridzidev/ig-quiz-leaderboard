@@ -11,17 +11,25 @@ export default async function Page() {
     if (!response.ok) throw new Error('Failed to fetch CSV');
     const csvText = await response.text();
 
-    const { data } = Papa.parse(csvText, {
+    interface LeaderboardEntry {
+      id: string;
+      partisipasi: string;
+      score: number;
+      rank?: number;
+    }
+    
+    const { data } = Papa.parse<LeaderboardEntry>(csvText, {
       header: true,
       dynamicTyping: true,
       skipEmptyLines: true,
     });
-
-    const leaderboard = data.map((row) => ({
-      id: row['id/quiz'] || '',
-      partisipasi: row['partisipasi'] || '',
-      score: isNaN(Number(row['score'])) ? 0 : Number(row['score']),
+    
+    const leaderboard: LeaderboardEntry[] = data.map((row) => ({
+      id: (row as any)['id/quiz'] || '',
+      partisipasi: (row as any)['partisipasi'] || '',
+      score: Number((row as any)['score']) || 0,
     }));
+    
 
     leaderboard.sort((a, b) =>
       a.score !== b.score ? b.score - a.score : (a.id || '').localeCompare(b.id || '')
