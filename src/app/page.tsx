@@ -1,6 +1,5 @@
 import Papa from 'papaparse';
 
-// Revalidate the data every 5 minutes (300 seconds)
 export const revalidate = 300;
 
 export default async function Page() {
@@ -18,10 +17,10 @@ export default async function Page() {
       skipEmptyLines: true,
     });
 
-    let leaderboard = data.map((row) => ({
+    const leaderboard = data.map((row) => ({
       id: row['id/quiz'] || '',
       partisipasi: row['partisipasi'] || '',
-      score: Number(row['score']) || 0,
+      score: isNaN(Number(row['score'])) ? 0 : Number(row['score']),
     }));
 
     leaderboard.sort((a, b) =>
@@ -61,7 +60,7 @@ export default async function Page() {
                   <td className="px-4 py-3 whitespace-nowrap">
                     <div className="flex items-center">
                       <div className="w-10 h-10 rounded-full bg-purple-300 flex items-center justify-center text-white font-bold">
-                        {item.id.charAt(0).toUpperCase() || '?'}
+                        {item.id ? item.id.charAt(0).toUpperCase() : '?'}
                       </div>
                       <span className="ml-2 text-sm text-gray-800">{item.id}</span>
                     </div>
