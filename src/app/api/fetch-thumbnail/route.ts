@@ -22,13 +22,16 @@ export async function GET(request: Request) {
     } else {
       return NextResponse.json({ error: 'Thumbnail not found' }, { status: 404 });
     }
-  } catch (error: any) { // Cast to `any` to access `message`
-    console.error("Error fetching thumbnail:", error);  // Log the error
-
-    // Optionally include more detail in error:
-    return NextResponse.json({ error: `Failed to fetch data: ${error.message}` }, { status: 500 });
-
-    // Or, just return a generic error:
-    // return NextResponse.json({ error: 'Failed to fetch data' }, { status: 500 });
+  } catch (error: unknown) { // Use `unknown` instead of `any`
+    if (axios.isAxiosError(error)) {
+      console.error("Error fetching thumbnail:", error.message);  // Log the error message from Axios
+      return NextResponse.json({ error: `Failed to fetch data: ${error.message}` }, { status: 500 });
+    } else if (error instanceof Error) {
+      console.error("Unexpected error:", error.message); // Log unexpected errors
+      return NextResponse.json({ error: `Unexpected error: ${error.message}` }, { status: 500 });
+    } else {
+      console.error("Unknown error:", error);  // Log any unknown errors
+      return NextResponse.json({ error: 'Failed to fetch data due to an unknown error' }, { status: 500 });
+    }
   }
 }
