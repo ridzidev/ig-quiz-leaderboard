@@ -1,4 +1,3 @@
-// src/app/api/fetch-thumbnail/route.ts
 import axios from 'axios';
 import { NextResponse } from 'next/server';
 
@@ -17,7 +16,7 @@ export async function GET(request: Request) {
     const html = response.data;
 
     // Use a regex to extract the image URL
-    const imgMatch = html.match(/<img[^>]+src="([^">]+)"/);
+    const imgMatch = html.match(/<img[^>]+src=["']([^"']+)["']/);
     if (imgMatch && imgMatch[1]) {
       return NextResponse.json({ thumbnail: imgMatch[1] });
     } else {
@@ -26,10 +25,10 @@ export async function GET(request: Request) {
   } catch (error: any) { // Cast to `any` to access `message`
     console.error("Error fetching thumbnail:", error);  // Log the error
 
-    //Optionally include more detail in error:
+    // Optionally include more detail in error:
     return NextResponse.json({ error: `Failed to fetch data: ${error.message}` }, { status: 500 });
 
-    //Or, just return a generic error:
-    //return NextResponse.json({ error: 'Failed to fetch data' }, { status: 500 });
+    // Or, just return a generic error:
+    // return NextResponse.json({ error: 'Failed to fetch data' }, { status: 500 });
   }
 }
