@@ -23,7 +23,13 @@ export async function GET(request: Request) {
     } else {
       return NextResponse.json({ error: 'Thumbnail not found' }, { status: 404 });
     }
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to fetch data' }, { status: 500 });
+  } catch (error: any) { // Cast to `any` to access `message`
+    console.error("Error fetching thumbnail:", error);  // Log the error
+
+    //Optionally include more detail in error:
+    return NextResponse.json({ error: `Failed to fetch data: ${error.message}` }, { status: 500 });
+
+    //Or, just return a generic error:
+    //return NextResponse.json({ error: 'Failed to fetch data' }, { status: 500 });
   }
-}   
+}

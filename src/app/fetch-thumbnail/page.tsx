@@ -2,6 +2,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image'; // Import the Image component
 
 export default function FetchThumbnailPage() {
   const [username, setUsername] = useState('');
@@ -27,6 +28,7 @@ export default function FetchThumbnailPage() {
         setError(data.error);
       }
     } catch (err) {
+      console.error("Error fetching thumbnail:", err); //Log the error
       setError('Failed to fetch thumbnail.');
     }
   };
@@ -49,7 +51,13 @@ export default function FetchThumbnailPage() {
       {thumbnail && (
         <div className="mt-4">
           <h2 className="text-xl">Thumbnail for @{username}:</h2>
-          <img src={thumbnail} alt={`Thumbnail of ${username}`} className="mt-2" />
+          <Image
+            src={thumbnail}
+            alt={`Thumbnail of ${username}`}
+            width={100}  // Adjust width and height as needed
+            height={100}
+            className="mt-2 rounded-full" //circular thumbnail
+          />
         </div>
       )}
     </div>

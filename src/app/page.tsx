@@ -1,4 +1,5 @@
 import Papa from 'papaparse';
+import Image from 'next/image'; // Import the Image component
 
 export const revalidate = 300;
 
@@ -74,7 +75,13 @@ export default async function Page() {
                     <div className="flex items-center">
                       <div className="w-10 h-10 rounded-full overflow-hidden bg-purple-300 flex items-center justify-center">
                         {item.imageurl ? (
-                          <img src={item.imageurl} alt={item.id} className="w-full h-full object-cover" />
+                          <Image
+                            src={item.imageurl}
+                            alt={item.id}
+                            width={40}  // Adjust width and height as needed
+                            height={40}
+                            className="w-full h-full object-cover"
+                          />
                         ) : (
                           <div className="w-full h-full bg-purple-500 text-white flex items-center justify-center font-bold">
                             {item.id ? item.id.charAt(0).toUpperCase() : '?'}
