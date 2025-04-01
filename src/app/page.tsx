@@ -16,20 +16,22 @@ export default async function Page() {
       partisipasi: string;
       score: number;
       rank?: number;
+      imageurl?: string; // New field for the image URL
     }
-    
-    // Use proper typing for Papa.parse
+
+    // Parse the CSV
     const parsed = Papa.parse<Record<string, unknown>>(csvText, {
       header: true,
       dynamicTyping: true,
       skipEmptyLines: true,
     });
 
-    // Ensure data is an array of LeaderboardEntry
+    // Ensure that data is an array of LeaderboardEntry
     const leaderboard: LeaderboardEntry[] = parsed.data.map((row) => ({
-      id: String(row["username"] || ''),  // Updated key from "id/quiz" to "username"
+      id: String(row["username"] || ''),
       partisipasi: String(row["partisipasi"] || ''),
       score: Number(row["score"]) || 0,
+      imageurl: String(row["imageurl"] || ''), // New image URL field
     }));
 
     // Sorting & Ranking Logic
@@ -70,8 +72,14 @@ export default async function Page() {
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap">
                     <div className="flex items-center">
-                      <div className="w-10 h-10 rounded-full bg-purple-300 flex items-center justify-center text-white font-bold">
-                        {item.id ? item.id.charAt(0).toUpperCase() : '?'}
+                      <div className="w-10 h-10 rounded-full overflow-hidden bg-purple-300 flex items-center justify-center">
+                        {item.imageurl ? (
+                          <img src={item.imageurl} alt={item.id} className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full bg-purple-500 text-white flex items-center justify-center font-bold">
+                            {item.id ? item.id.charAt(0).toUpperCase() : '?'}
+                          </div>
+                        )}
                       </div>
                       <span className="ml-2 text-sm text-gray-800">{item.id}</span>
                     </div>
