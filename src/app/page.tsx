@@ -33,7 +33,12 @@ export default async function Page() {
       partisipasi: String(row["partisipasi"] || ''),
       score: Number(row["score"]) || 0,
       imageurl: String(row["imageurl"] || ''), // New image URL field
-    }));
+    }));  
+
+    // Calculate total quizzes and participants
+    const headerCount = parsed.meta?.fields ? parsed.meta.fields.length : 0; // Safe navigation operator
+    const totalQuizzes = headerCount > 5 ? headerCount - 5 : 0; 
+    const totalParticipants = leaderboard.length;
 
     // Sorting & Ranking Logic
     leaderboard.sort((a, b) =>
@@ -52,6 +57,14 @@ export default async function Page() {
       <div className="container mx-auto p-4">
         <h1 className="text-3xl font-bold text-purple-800 mb-4">ridzi.ma Instagram Quiz Leaderboard</h1>
         <p className="text-sm text-gray-600 mb-2">Last updated: {fetchTime}</p>
+
+        {/* Box to show total quizzes and participants */}
+        <div className="bg-purple-100 p-4 rounded-lg mb-4">
+          <h2 className="text-lg font-bold text-purple-700">Quiz Statistics</h2>
+          <p className="text-sm text-gray-600">Total Quizzes: {totalQuizzes}</p>
+          <p className="text-sm text-gray-600">Total Participants: {totalParticipants}</p>
+        </div>
+
         <div className="overflow-x-auto">
           <table className="min-w-full bg-white divide-y divide-gray-200 shadow-lg rounded-lg overflow-hidden">
             <thead className="bg-purple-200">
