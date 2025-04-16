@@ -11,9 +11,6 @@ import {
   Tooltip,
   Legend,
   ChartOptions,
-  ScriptableContext,
-  FontSpec,
-  Scriptable,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
 import { useState, useEffect } from "react";
@@ -27,9 +24,6 @@ ChartJS.register(
   Tooltip,
   Legend
 );
-
-// remove revalidate
-// export const revalidate = 300;
 
 // Define the LeaderboardEntry interface
 interface LeaderboardEntry {
@@ -94,7 +88,7 @@ const chartOptions: ChartOptions<"bar"> = {
     },
     tooltip: {
       callbacks: {
-        label: (context: any) => {
+        label: (context) => {
           // Specify the type for 'context'
           let label = context.dataset.label || "";
 
@@ -112,16 +106,6 @@ const chartOptions: ChartOptions<"bar"> = {
     },
   },
 };
-
-// Define a type for the label callback context.
-interface TooltipLabelContext {
-  dataset: {
-    label?: string;
-  };
-  parsed: {
-    y: number | null;
-  };
-}
 
 const Page = () => {
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
