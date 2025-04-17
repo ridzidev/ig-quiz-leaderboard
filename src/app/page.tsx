@@ -30,7 +30,9 @@ interface LeaderboardEntry {
   id: string;
   partisipasi: string;
   score: number;
+  prevscore: number; // Added prevscore
   rank?: number;
+  prevrank?: number; // Added prevrank
   imageurl?: string;
   scoreParticipationRatio?: number;
 }
@@ -89,9 +91,7 @@ const chartOptions: ChartOptions<"bar"> = {
     tooltip: {
       callbacks: {
         label: (context) => {
-          // Specify the type for 'context'
           let label = context.dataset.label || "";
-
           if (label) {
             label += ": ";
           }
@@ -153,6 +153,7 @@ const Page = () => {
             id: String(row["username"] || ""),
             partisipasi: String(row["partisipasi"] || ""),
             score: Number(row["score"]) || 0,
+            prevscore: Number(row["prevscore"]) || 0, // Parse prevscore
             imageurl: String(row["imageurl"] || ""),
           })
         );
@@ -161,10 +162,30 @@ const Page = () => {
         const quizzes = headerCount > 5 ? headerCount - 5 : 0;
         const participants = parsedLeaderboard.length;
 
+        // Calculate previous ranks
+        const prevScoreList = parsedLeaderboard
+          .filter((item) => item.prevscore > 0)
+          .map((item) => ({ id: item.id, prevscore: item.prevscore }));
+        prevScoreList.sort((a, b) => b.prevscore - a.prevscore);
+        const prevRankMap = new Map<string, number>();
+        if (prevScoreList.length > 0) {
+          let currentRank = 1;
+          prevRankMap.set(prevScoreList[0].id, currentRank);
+          for (let i = 1; i < prevScoreList.length; i++) {
+            if (prevScoreList[i].prevscore < prevScoreList[i - 1].prevscore) {
+              currentRank = i + 1;
+            }
+            prevRankMap.set(prevScoreList[i].id, currentRank);
+          }
+        }
+        parsedLeaderboard.forEach((item) => {
+          item.prevrank = prevRankMap.get(item.id); // Undefined for new participants
+        });
+
+        // Calculate current ranks
         parsedLeaderboard.sort((a, b) =>
           a.score !== b.score ? b.score - a.score : a.id.localeCompare(b.id)
         );
-
         if (parsedLeaderboard.length > 0) {
           parsedLeaderboard[0].rank = 1;
           for (let i = 1; i < parsedLeaderboard.length; i++) {
@@ -430,6 +451,25 @@ const Page = () => {
               >
                 <td className="px-4 py-3 whitespace-nowrap text-sm font-bold text-gray-900">
                   {item.rank}
+                  {item.rank !== undefined &&
+                  item.prevscore > 0 &&
+                  item.prevrank !== undefined ? (
+                    <>
+                      {item.rank < item.prevrank && (
+                        <span className="ml-1 text-green-500">↑</span>
+                      )}
+                      {item.rank > item.prevrank && (
+                        <span className="ml-1 text-red-500">↓</span>
+                      )}
+                      {item.rank === item.prevrank && (
+                        <span className="ml-1 text-blue-500">→</span>
+                      )}
+                    </>
+                  ) : item.rank !== undefined && item.prevscore === 0 ? (
+                    <span className="ml-1 text-blue-500">→</span>
+                  ) : (
+                    <span className="ml-1 text-purple-500">🆕</span>
+                  )}
                   {item.rank === 1 && (
                     <span className="text-yellow-500 ml-1">🥇</span>
                   )}
